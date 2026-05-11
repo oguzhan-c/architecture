@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Oğuzhan Can")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.1.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.0+4ccabcc32dcb53eb1ffb1ee6ac761a7b8ae85a6e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.0+311262b00bdaa97a4f951a8785d76756e66099f2")]
 [assembly: System.Reflection.AssemblyProductAttribute("CCA.Core.CrossCuttingConcerns.Exception")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CCA.Core.CrossCuttingConcerns.Exception")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.1.0.0")]
