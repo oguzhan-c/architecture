@@ -14,7 +14,7 @@ public class TenantNotFoundException : System.Exception
     /// Initializes a new instance of <see cref="TenantNotFoundException"/>
     /// with a default message.
     /// </summary>
-    public TenantNotFoundExceptionTenantNotFoundException()
+    public TenantNotFoundException()
         : base("Tenant could not be resolved from the request.") { }
 
     /// <summary>
