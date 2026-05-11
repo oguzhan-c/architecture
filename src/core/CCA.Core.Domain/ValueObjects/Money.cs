@@ -1,4 +1,5 @@
-using CCA.Core.Domain.Primitives;
+
+using CCA.Core.Domain.Primitives.Classes;
 
 namespace CCA.Core.Domain.ValueObjects;
 

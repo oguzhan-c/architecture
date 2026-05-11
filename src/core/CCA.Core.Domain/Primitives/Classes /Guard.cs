@@ -1,4 +1,4 @@
-namespace CCA.Core.Domain.Primitives;
+namespace CCA.Core.Domain.Primitives.Classes;
 
 /// <summary>
 /// Provides static guard methods for validating method arguments.

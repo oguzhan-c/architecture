@@ -1,4 +1,6 @@
-namespace CCA.Core.Domain.Primitives;
+using CCA.Core.Domain.Primitives.Interfaces;
+
+namespace CCA.Core.Domain.Primitives.Classes;
 
 /// <summary>
 /// Base class for all domain entities.

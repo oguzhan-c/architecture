@@ -1,6 +1,7 @@
 using CCA.Core.Domain.Events;
+using CCA.Core.Domain.Primitives.Interfaces;
 
-namespace CCA.Core.Domain.Primitives;
+namespace CCA.Core.Domain.Primitives.Classes;
 
 /// <summary>
 /// Base class for DDD aggregate roots that are not tenant-scoped.
