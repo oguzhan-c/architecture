@@ -3,5 +3,6 @@
   <Folder Name="/src/core/">
     <Project Path="src/core/CCA.Core.CrossCuttingConcerns.Exception/CCA.Core.CrossCuttingConcerns.Exception.csproj" />
     <Project Path="src/core/CCA.Core.Domain/CCA.Core.Domain.csproj" />
+    <Project Path="src/core/CCA.Core.Persistence/CCA.Core.Persistence.csproj" />
   </Folder>
 </Solution>

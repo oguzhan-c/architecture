@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Oğuzhan Can")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.1.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.0+b8bea8712a6574ef75f4553ee523be21bd7d66d4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.0+b3151477a6be38cb98e72d4335f358b13d21b328")]
 [assembly: System.Reflection.AssemblyProductAttribute("CCA.Core.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CCA.Core.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.1.0.0")]
