@@ -1,0 +1,14 @@
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/bin/Debug/net10.0/CCA.Core.Domain.deps.json
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/bin/Debug/net10.0/CCA.Core.Domain.dll
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/bin/Debug/net10.0/CCA.Core.Domain.pdb
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/bin/Debug/net10.0/CCA.Core.Domain.xml
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.AssemblyInfoInputs.cache
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.AssemblyInfo.cs
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.csproj.CoreCompileInputs.cache
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.sourcelink.json
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.dll
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/refint/CCA.Core.Domain.dll
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.xml
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/CCA.Core.Domain.pdb
+/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/Debug/net10.0/ref/CCA.Core.Domain.dll

@@ -14,8 +14,8 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.1.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.0+b761b4b03248a57dd71fe425c8b91b54afdeaf60")]
-[assembly: System.Reflection.AssemblyProductAttribute("CCA.Core.Domain")]
-[assembly: System.Reflection.AssemblyTitleAttribute("CCA.Core.Domain")]
+[assembly: System.Reflection.AssemblyProductAttribute("CCA.Core.CrossCuttingConcerns.Exception")]
+[assembly: System.Reflection.AssemblyTitleAttribute("CCA.Core.CrossCuttingConcerns.Exception")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.1.0.0")]
 [assembly: System.Reflection.AssemblyMetadataAttribute("RepositoryUrl", "https://github.com/oguzhan-c/cca")]
 

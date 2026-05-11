@@ -13,11 +13,11 @@
   "project": {
     "version": "0.1.0",
     "restore": {
-      "projectUniqueName": "/Users/can/Github/architecture/src/core/CCA.Core.Domain/CCA.Core.Domain.csproj",
-      "projectName": "CCA.Core.Domain",
-      "projectPath": "/Users/can/Github/architecture/src/core/CCA.Core.Domain/CCA.Core.Domain.csproj",
+      "projectUniqueName": "/Users/can/Github/architecture/src/core/CCA.Core.CrossCuttingConcerns.Exception/CCA.Core.CrossCuttingConcerns.Exception.csproj",
+      "projectName": "CCA.Core.CrossCuttingConcerns.Exception",
+      "projectPath": "/Users/can/Github/architecture/src/core/CCA.Core.CrossCuttingConcerns.Exception/CCA.Core.CrossCuttingConcerns.Exception.csproj",
       "packagesPath": "/Users/can/.nuget/packages/",
-      "outputPath": "/Users/can/Github/architecture/src/core/CCA.Core.Domain/obj/",
+      "outputPath": "/Users/can/Github/architecture/src/core/CCA.Core.CrossCuttingConcerns.Exception/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/can/.nuget/NuGet/NuGet.Config"

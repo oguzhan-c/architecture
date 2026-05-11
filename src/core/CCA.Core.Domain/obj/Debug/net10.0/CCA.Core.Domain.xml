@@ -1,0 +1,794 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CCA.Core.Domain</name>
+    </assembly>
+    <members>
+        <member name="T:CCA.Core.Domain.Events.DomainEvent">
+            <summary>
+            Base record for all domain events.
+            Automatically assigns a new <see cref="P:CCA.Core.Domain.Events.IDomainEvent.Id"/>
+            and sets <see cref="P:CCA.Core.Domain.Events.IDomainEvent.OccurredOn"/> to the current UTC time.
+            </summary>
+            <example>
+            <code>
+            public record OrderCreatedEvent(Guid OrderId, Guid TenantId) : DomainEvent;
+            </code>
+            </example>
+        </member>
+        <member name="P:CCA.Core.Domain.Events.DomainEvent.Id">
+            <inheritdoc/>
+        </member>
+        <member name="P:CCA.Core.Domain.Events.DomainEvent.OccurredOn">
+            <inheritdoc/>
+        </member>
+        <member name="T:CCA.Core.Domain.Events.IDomainEvent">
+            <summary>
+            Marker interface for domain events.
+            Domain events represent something meaningful that happened in the domain.
+            They are raised inside aggregate roots and dispatched after
+            <c>SaveChangesAsync</c> commits successfully.
+            </summary>
+            <remarks>
+            CCA keeps this interface free of MediatR dependencies to preserve
+            the zero-dependency rule of <c>CCA.Core.Domain</c>.
+            The dispatcher in <c>CCA.Core.Persistence</c> wraps domain events
+            into MediatR notifications before dispatching.
+            </remarks>
+        </member>
+        <member name="P:CCA.Core.Domain.Events.IDomainEvent.Id">
+            <summary>
+            Gets the unique identifier of this domain event instance.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Events.IDomainEvent.OccurredOn">
+            <summary>
+            Gets the UTC date and time when this event occurred.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Pagination.PagedResponse`1">
+            <summary>
+            Represents a paginated response returned to the client.
+            Contains the current page of items and metadata about the full result set.
+            </summary>
+            <typeparam name="T">The type of items in this page.</typeparam>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PagedResponse`1.Items">
+            <summary>
+            Gets or sets the items on the current page.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PagedResponse`1.PageIndex">
+            <summary>
+            Gets or sets the zero-based index of the current page.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PagedResponse`1.PageSize">
+            <summary>
+            Gets or sets the number of items per page.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PagedResponse`1.TotalCount">
+            <summary>
+            Gets or sets the total number of records across all pages.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PagedResponse`1.TotalPages">
+            <summary>
+            Gets the total number of pages based on
+            <see cref="P:CCA.Core.Domain.Pagination.PagedResponse`1.TotalCount"/> and <see cref="P:CCA.Core.Domain.Pagination.PagedResponse`1.PageSize"/>.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PagedResponse`1.HasPrevious">
+            <summary>
+            Gets a value indicating whether a previous page exists.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PagedResponse`1.HasNext">
+            <summary>
+            Gets a value indicating whether a next page exists.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Pagination.PagedResponse`1.Create(System.Collections.Generic.IList{`0},System.Int32,CCA.Core.Domain.Pagination.PageRequest)">
+            <summary>
+            Creates a <see cref="T:CCA.Core.Domain.Pagination.PagedResponse`1"/> from a list of items,
+            a total count, and the original page request.
+            </summary>
+            <param name="items">The items on the current page.</param>
+            <param name="totalCount">The total number of records across all pages.</param>
+            <param name="request">The original page request.</param>
+            <returns>A populated <see cref="T:CCA.Core.Domain.Pagination.PagedResponse`1"/>.</returns>
+        </member>
+        <member name="T:CCA.Core.Domain.Pagination.PageRequest">
+            <summary>
+            Represents pagination and sorting parameters sent by the client.
+            Passed to repository methods and query handlers to control
+            which page of data is returned.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PageRequest.PageIndex">
+            <summary>
+            Gets or sets the zero-based page index.
+            Page 0 is the first page. Defaults to 0.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PageRequest.PageSize">
+            <summary>
+            Gets or sets the number of items per page.
+            Defaults to 10.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PageRequest.SortBy">
+            <summary>
+            Gets or sets the field name to sort by.
+            <c>null</c> means no explicit sorting is applied.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PageRequest.SortDescending">
+            <summary>
+            Gets or sets a value indicating whether the sort direction is descending.
+            <c>false</c> (ascending) by default.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Pagination.PageRequest.Skip">
+            <summary>
+            Gets the number of records to skip, computed from
+            <see cref="P:CCA.Core.Domain.Pagination.PageRequest.PageIndex"/> and <see cref="P:CCA.Core.Domain.Pagination.PageRequest.PageSize"/>.
+            Used directly in SQL <c>OFFSET</c> clauses.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.AggregateRoot`1">
+            <summary>
+            Base class for DDD aggregate roots that are not tenant-scoped.
+            Extends <see cref="T:CCA.Core.Domain.Primitives.Entity`1"/> with domain event support.
+            </summary>
+            <remarks>
+            Use this base class for global aggregate roots (not scoped to any tenant).
+            For tenant-scoped aggregate roots, use <see cref="T:CCA.Core.Domain.Primitives.TenantAggregateRoot`1"/>.
+            </remarks>
+            <typeparam name="TId">The type of the aggregate root identifier.</typeparam>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.AggregateRoot`1.DomainEvents">
+            <inheritdoc/>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.AggregateRoot`1.RaiseDomainEvent(CCA.Core.Domain.Events.IDomainEvent)">
+            <summary>
+            Adds a domain event to the list of pending events.
+            Events are dispatched after <c>SaveChangesAsync</c> commits.
+            </summary>
+            <param name="domainEvent">The domain event to raise.</param>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.AggregateRoot`1.ClearDomainEvents">
+            <inheritdoc/>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.Entity`1">
+            <summary>
+            Base class for all domain entities.
+            Provides identity-based equality — two entities with the same
+            <see cref="P:CCA.Core.Domain.Primitives.Entity`1.Id"/> are considered equal regardless of reference.
+            </summary>
+            <remarks>
+            In DDD, entity identity is determined by the Id, not by memory address.
+            This class enforces that rule through overridden Equals, GetHashCode,
+            and equality operators.
+            </remarks>
+            <typeparam name="TId">The type of the entity identifier.</typeparam>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.Entity`1.Id">
+            <summary>
+            Gets or sets the unique identifier of this entity.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.Entity`1.CreatedDate">
+            <summary>
+            Gets or sets the UTC date and time when this entity was created.
+            Set automatically by the EF Core interceptor on insert.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.Entity`1.UpdatedDate">
+            <summary>
+            Gets or sets the UTC date and time when this entity was last updated.
+            Set automatically by the EF Core interceptor on update.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.Entity`1.DeletedDate">
+            <summary>
+            Gets or sets the UTC date and time when this entity was soft-deleted.
+            Null means the entity is not deleted.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Entity`1.Equals(System.Object)">
+            <summary>
+            Determines whether this entity equals another object.
+            Two entities are equal if they are of the same type and have the same <see cref="P:CCA.Core.Domain.Primitives.Entity`1.Id"/>.
+            </summary>
+            <param name="obj">The object to compare with.</param>
+            <returns>
+            <c>true</c> if the objects are equal; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Entity`1.GetHashCode">
+            <summary>
+            Returns the hash code for this entity based on its <see cref="P:CCA.Core.Domain.Primitives.Entity`1.Id"/>.
+            Required when <see cref="M:CCA.Core.Domain.Primitives.Entity`1.Equals(System.Object)"/> is overridden — ensures
+            entities work correctly in dictionaries and hash sets.
+            </summary>
+            <returns>A hash code for the current entity.</returns>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Entity`1.op_Equality(CCA.Core.Domain.Primitives.Entity{`0},CCA.Core.Domain.Primitives.Entity{`0})">
+            <summary>
+            Determines whether two entities are equal using identity-based comparison.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Entity`1.op_Inequality(CCA.Core.Domain.Primitives.Entity{`0},CCA.Core.Domain.Primitives.Entity{`0})">
+            <summary>
+            Determines whether two entities are not equal using identity-based comparison.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.Guard">
+            <summary>
+            Provides static guard methods for validating method arguments.
+            Replaces external libraries (e.g. Ardalis.GuardClauses) to keep
+            <c>CCA.Core.Domain</c> free of NuGet dependencies.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Guard.NullOrWhiteSpace(System.String,System.String,System.String)">
+            <summary>
+            Throws <see cref="T:System.ArgumentException"/> if the value is null or whitespace.
+            </summary>
+            <param name="value">The string value to validate.</param>
+            <param name="paramName">The name of the parameter being validated.</param>
+            <param name="message">Optional custom error message.</param>
+            <returns>The original value if validation passes.</returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when <paramref name="value"/> is null, empty, or whitespace.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Guard.Null``1(``0,System.String,System.String)">
+            <summary>
+            Throws <see cref="T:System.ArgumentNullException"/> if the value is null.
+            </summary>
+            <typeparam name="T">The type of the value being validated.</typeparam>
+            <param name="value">The value to validate.</param>
+            <param name="paramName">The name of the parameter being validated.</param>
+            <param name="message">Optional custom error message.</param>
+            <returns>The original value if validation passes.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when <paramref name="value"/> is null.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Guard.NegativeOrZero(System.Decimal,System.String,System.String)">
+            <summary>
+            Throws <see cref="T:System.ArgumentException"/> if the decimal value is negative or zero.
+            </summary>
+            <param name="value">The decimal value to validate.</param>
+            <param name="paramName">The name of the parameter being validated.</param>
+            <param name="message">Optional custom error message.</param>
+            <returns>The original value if validation passes.</returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when <paramref name="value"/> is less than or equal to zero.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Guard.NegativeOrZero(System.Int32,System.String,System.String)">
+            <summary>
+            Throws <see cref="T:System.ArgumentException"/> if the integer value is negative or zero.
+            </summary>
+            <param name="value">The integer value to validate.</param>
+            <param name="paramName">The name of the parameter being validated.</param>
+            <param name="message">Optional custom error message.</param>
+            <returns>The original value if validation passes.</returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when <paramref name="value"/> is less than or equal to zero.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Guard.EmptyGuid(System.Guid,System.String,System.String)">
+            <summary>
+            Throws <see cref="T:System.ArgumentException"/> if the Guid value is empty.
+            </summary>
+            <param name="value">The Guid value to validate.</param>
+            <param name="paramName">The name of the parameter being validated.</param>
+            <param name="message">Optional custom error message.</param>
+            <returns>The original value if validation passes.</returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when <paramref name="value"/> equals <see cref="F:System.Guid.Empty"/>.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.Guard.OutOfRange(System.Int32,System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            Throws <see cref="T:System.ArgumentOutOfRangeException"/> if the value is outside
+            the specified inclusive range.
+            </summary>
+            <param name="value">The integer value to validate.</param>
+            <param name="paramName">The name of the parameter being validated.</param>
+            <param name="min">The minimum allowed value (inclusive).</param>
+            <param name="max">The maximum allowed value (inclusive).</param>
+            <param name="message">Optional custom error message.</param>
+            <returns>The original value if validation passes.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            Thrown when <paramref name="value"/> is less than <paramref name="min"/>
+            or greater than <paramref name="max"/>.
+            </exception>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.TenantAggregateRoot`1">
+            <summary>
+            Base class for tenant-scoped DDD aggregate roots.
+            Combines <see cref="T:CCA.Core.Domain.Primitives.AggregateRoot`1"/> with <see cref="T:CCA.Core.Domain.Primitives.IMultiTenant"/> support.
+            </summary>
+            <remarks>
+            This is the most common base class for top-level domain concepts in
+            multi-tenant applications built on CCA. Examples: Order, Invoice, Product.
+            <para>
+            Use <see cref="T:CCA.Core.Domain.Primitives.AggregateRoot`1"/> for global aggregates (not tenant-scoped).
+            Use <see cref="T:CCA.Core.Domain.Primitives.TenantEntity`1"/> for inner entities that live inside an aggregate.
+            </para>
+            </remarks>
+            <typeparam name="TId">The type of the aggregate root identifier.</typeparam>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.TenantAggregateRoot`1.TenantId">
+            <inheritdoc/>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.TenantEntity`1">
+            <summary>
+            Base class for tenant-scoped domain entities that do not raise domain events.
+            Extends <see cref="T:CCA.Core.Domain.Primitives.Entity`1"/> with <see cref="T:CCA.Core.Domain.Primitives.IMultiTenant"/> support.
+            </summary>
+            <remarks>
+            Use this base class for entities that:
+            <list type="bullet">
+              <item>Belong to a specific tenant</item>
+              <item>Do not raise domain events</item>
+              <item>Live inside an aggregate (not an aggregate root themselves)</item>
+            </list>
+            For entities that raise domain events, use <see cref="T:CCA.Core.Domain.Primitives.TenantAggregateRoot`1"/>.
+            For global (non-tenant) entities, use <see cref="T:CCA.Core.Domain.Primitives.Entity`1"/>.
+            </remarks>
+            <typeparam name="TId">The type of the entity identifier.</typeparam>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.TenantEntity`1.TenantId">
+            <inheritdoc/>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.IAggregateRoot">
+            <summary>
+            Marks an entity as a DDD aggregate root.
+            Aggregate roots are the only entry point to their aggregate cluster.
+            They raise domain events that are dispatched after the transaction commits.
+            </summary>
+            <remarks>
+            Only aggregate roots have repositories. Inner entities of an aggregate
+            are accessed exclusively through the aggregate root.
+            </remarks>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.IAggregateRoot.DomainEvents">
+            <summary>
+            Gets the list of domain events raised by this aggregate root
+            since the last time they were cleared.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.IAggregateRoot.ClearDomainEvents">
+            <summary>
+            Clears all domain events from this aggregate root.
+            Called by the dispatcher after events have been published.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.IAuditableEntity">
+            <summary>
+            Marks an entity as auditable.
+            The EF Core interceptor automatically sets <see cref="P:CCA.Core.Domain.Primitives.IAuditableEntity.CreatedBy"/>
+            and <see cref="P:CCA.Core.Domain.Primitives.IAuditableEntity.UpdatedBy"/> from <c>ICurrentUser</c> on every save.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.IAuditableEntity.CreatedBy">
+            <summary>
+            Gets or sets the identifier of the user who created this entity.
+            Set automatically on insert.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.IAuditableEntity.UpdatedBy">
+            <summary>
+            Gets or sets the identifier of the user who last updated this entity.
+            Set automatically on update.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.IEntity`1">
+            <summary>
+            Defines the base contract for all entities in the domain.
+            Every entity has a strongly-typed identifier.
+            </summary>
+            <typeparam name="TId">The type of the entity identifier.</typeparam>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.IEntity`1.Id">
+            <summary>
+            Gets the unique identifier of this entity.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.IMultiTenant">
+            <summary>
+            Marks an entity as tenant-aware.
+            The EF Core global query filter automatically scopes all queries
+            to the current tenant by adding <c>WHERE TenantId = @currentTenantId</c>.
+            The EF Core interceptor automatically sets <see cref="P:CCA.Core.Domain.Primitives.IMultiTenant.TenantId"/>
+            from <c>ICurrentUser</c> on insert.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.IMultiTenant.TenantId">
+            <summary>
+            Gets or sets the unique identifier of the tenant this entity belongs to.
+            <c>null</c> means the entity is global (not tenant-scoped).
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.IRecalculable">
+            <summary>
+            Defines a contract for entities that have computed fields derived
+            from their child collections or other properties.
+            Forces the entity to own its own recalculation logic.
+            </summary>
+            <remarks>
+            Entities implementing this interface call <see cref="M:CCA.Core.Domain.Primitives.IRecalculable.Recalculate"/>
+            inside every mutating method that affects the computed fields.
+            Handlers never calculate totals, aggregates, or derived values directly.
+            This pattern was adopted from the EFisher production project.
+            </remarks>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.IRecalculable.Recalculate">
+            <summary>
+            Recomputes all derived fields from the current state of the entity.
+            Called internally after any mutation that affects computed values.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.ISoftDeletable">
+            <summary>
+            Marks an entity as soft-deletable.
+            Soft-deleted entities are never physically removed from the database.
+            The EF Core global query filter automatically excludes them from all queries
+            by adding <c>WHERE DeletedAt IS NULL</c>.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.ISoftDeletable.DeletedAt">
+            <summary>
+            Gets or sets the UTC date and time when this entity was soft-deleted.
+            <c>null</c> means the entity is active and not deleted.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.ISoftDeletable.DeletedByUserId">
+            <summary>
+            Gets or sets the identifier of the user who deleted this entity.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.ISoftDeletable.IsDeleted">
+            <summary>
+            Gets a value indicating whether this entity has been soft-deleted.
+            </summary>
+        </member>
+        <member name="T:CCA.Core.Domain.Primitives.IStateMachine`1">
+            <summary>
+            Defines a contract for entities that have a lifecycle status with
+            valid state transitions. Forces the entity to own its own state machine logic.
+            </summary>
+            <remarks>
+            Transition validation lives inside the entity — handlers never check
+            <c>if (entity.Status == X)</c> directly. They call <see cref="M:CCA.Core.Domain.Primitives.IStateMachine`1.CanTransitionTo(`0)"/>
+            or a domain method that uses it internally.
+            </remarks>
+            <typeparam name="TStatus">The enum or type representing the entity status.</typeparam>
+        </member>
+        <member name="P:CCA.Core.Domain.Primitives.IStateMachine`1.Status">
+            <summary>
+            Gets the current status of this entity.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Primitives.IStateMachine`1.CanTransitionTo(`0)">
+            <summary>
+            Determines whether a transition to the specified status is valid
+            from the current status.
+            </summary>
+            <param name="newStatus">The target status to transition to.</param>
+            <returns>
+            <c>true</c> if the transition is valid; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:CCA.Core.Domain.Results.Error">
+            <summary>
+            Represents a structured domain error with a code and a message.
+            Used as the failure value in <see cref="T:CCA.Core.Domain.Results.Result"/> and <see cref="T:CCA.Core.Domain.Results.Result`1"/>.
+            </summary>
+            <remarks>
+            Error codes follow the convention <c>EntityName.ErrorType</c>,
+            for example <c>User.NotFound</c> or <c>Order.AlreadyShipped</c>.
+            Controllers use the code suffix to determine the HTTP status code automatically:
+            codes ending in <c>.NotFound</c> map to 404, <c>.Forbidden</c> to 403, etc.
+            </remarks>
+            <param name="Code">A unique machine-readable error identifier.</param>
+            <param name="Message">A human-readable description of the error.</param>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Error.#ctor(System.String,System.String)">
+            <summary>
+            Represents a structured domain error with a code and a message.
+            Used as the failure value in <see cref="T:CCA.Core.Domain.Results.Result"/> and <see cref="T:CCA.Core.Domain.Results.Result`1"/>.
+            </summary>
+            <remarks>
+            Error codes follow the convention <c>EntityName.ErrorType</c>,
+            for example <c>User.NotFound</c> or <c>Order.AlreadyShipped</c>.
+            Controllers use the code suffix to determine the HTTP status code automatically:
+            codes ending in <c>.NotFound</c> map to 404, <c>.Forbidden</c> to 403, etc.
+            </remarks>
+            <param name="Code">A unique machine-readable error identifier.</param>
+            <param name="Message">A human-readable description of the error.</param>
+        </member>
+        <member name="P:CCA.Core.Domain.Results.Error.Code">
+            <summary>A unique machine-readable error identifier.</summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Results.Error.Message">
+            <summary>A human-readable description of the error.</summary>
+        </member>
+        <member name="F:CCA.Core.Domain.Results.Error.None">
+            <summary>
+            Represents the absence of an error. Used as the error value for successful results.
+            </summary>
+        </member>
+        <member name="F:CCA.Core.Domain.Results.Error.NullValue">
+            <summary>
+            Represents an error caused by a null value being provided where one is not allowed.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Error.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:CCA.Core.Domain.Results.Result">
+            <summary>
+            Represents the outcome of an operation that can either succeed or fail.
+            Used instead of throwing exceptions for expected business failures.
+            </summary>
+            <remarks>
+            Always use <see cref="M:CCA.Core.Domain.Results.Result.Success"/> or <see cref="M:CCA.Core.Domain.Results.Result.Failure(CCA.Core.Domain.Results.Error)"/> factory methods
+            to create instances. Direct construction is not allowed.
+            <para>
+            For operations that return a value on success, use <see cref="T:CCA.Core.Domain.Results.Result`1"/>.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Result.#ctor(System.Boolean,CCA.Core.Domain.Results.Error)">
+            <summary>
+            Initializes a new instance of <see cref="T:CCA.Core.Domain.Results.Result"/>.
+            </summary>
+            <param name="isSuccess">Whether the operation succeeded.</param>
+            <param name="error">The error if the operation failed.</param>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown if a success result has a non-empty error,
+            or if a failure result has an empty error.
+            </exception>
+        </member>
+        <member name="P:CCA.Core.Domain.Results.Result.IsSuccess">
+            <summary>
+            Gets a value indicating whether the operation succeeded.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Results.Result.IsFailure">
+            <summary>
+            Gets a value indicating whether the operation failed.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.Results.Result.Error">
+            <summary>
+            Gets the error associated with a failed result.
+            Returns <see cref="F:CCA.Core.Domain.Results.Error.None"/> for successful results.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Result.Success">
+            <summary>
+            Creates a successful result with no value.
+            </summary>
+            <returns>A successful <see cref="T:CCA.Core.Domain.Results.Result"/>.</returns>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Result.Failure(CCA.Core.Domain.Results.Error)">
+            <summary>
+            Creates a failed result with the specified error.
+            </summary>
+            <param name="error">The error describing the failure.</param>
+            <returns>A failed <see cref="T:CCA.Core.Domain.Results.Result"/>.</returns>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Result.Success``1(``0)">
+            <summary>
+            Creates a successful result carrying a value.
+            </summary>
+            <typeparam name="TValue">The type of the success value.</typeparam>
+            <param name="value">The value to carry on success.</param>
+            <returns>A successful <see cref="T:CCA.Core.Domain.Results.Result`1"/>.</returns>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Result.Failure``1(CCA.Core.Domain.Results.Error)">
+            <summary>
+            Creates a failed result of the specified value type.
+            </summary>
+            <typeparam name="TValue">The type of the success value.</typeparam>
+            <param name="error">The error describing the failure.</param>
+            <returns>A failed <see cref="T:CCA.Core.Domain.Results.Result`1"/>.</returns>
+        </member>
+        <member name="T:CCA.Core.Domain.Results.Result`1">
+            <summary>
+            Represents the outcome of an operation that returns a value on success.
+            On success, <see cref="P:CCA.Core.Domain.Results.Result`1.Value"/> contains the result.
+            On failure, <see cref="P:CCA.Core.Domain.Results.Result.Error"/> describes what went wrong.
+            </summary>
+            <typeparam name="TValue">The type of the value returned on success.</typeparam>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Result`1.#ctor(`0,System.Boolean,CCA.Core.Domain.Results.Error)">
+            <summary>
+            Initializes a new instance of <see cref="T:CCA.Core.Domain.Results.Result`1"/>.
+            </summary>
+            <param name="value">The success value.</param>
+            <param name="isSuccess">Whether the operation succeeded.</param>
+            <param name="error">The error if the operation failed.</param>
+        </member>
+        <member name="P:CCA.Core.Domain.Results.Result`1.Value">
+            <summary>
+            Gets the value of a successful result.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown when accessed on a failed result.
+            Always check <see cref="P:CCA.Core.Domain.Results.Result.IsSuccess"/> before accessing this property.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.Results.Result`1.op_Implicit(`0)~CCA.Core.Domain.Results.Result{`0}">
+            <summary>
+            Implicitly converts a value to a successful <see cref="T:CCA.Core.Domain.Results.Result`1"/>.
+            Allows returning a value directly from methods that return <c>Result&lt;T&gt;</c>.
+            </summary>
+            <param name="value">The value to wrap in a successful result.</param>
+        </member>
+        <member name="T:CCA.Core.Domain.ValueObjects.Money">
+            <summary>
+            Represents a monetary amount with an ISO 4217 currency code.
+            Immutable value object — all operations return a new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance.
+            </summary>
+            <remarks>
+            Decimal places are automatically determined by the currency code:
+            <list type="bullet">
+              <item>0 decimal places: JPY, KRW, VND, BIF, GNF</item>
+              <item>3 decimal places: KWD, BHD, OMR, TND</item>
+              <item>2 decimal places: all others (USD, EUR, TRY, GBP, etc.)</item>
+            </list>
+            Arithmetic across different currencies is not allowed and throws
+            <see cref="T:System.InvalidOperationException"/>.
+            </remarks>
+        </member>
+        <member name="P:CCA.Core.Domain.ValueObjects.Money.Amount">
+            <summary>
+            Gets the monetary amount, rounded to the correct decimal places
+            for the currency.
+            </summary>
+        </member>
+        <member name="P:CCA.Core.Domain.ValueObjects.Money.CurrencyCode">
+            <summary>
+            Gets the ISO 4217 currency code (e.g. "USD", "EUR", "TRY").
+            Always stored in uppercase.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.Of(System.Decimal,System.String)">
+            <summary>
+            Creates a new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance with the specified amount and currency.
+            </summary>
+            <param name="amount">The monetary amount.</param>
+            <param name="currencyCode">The ISO 4217 currency code.</param>
+            <returns>A new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance.</returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when <paramref name="currencyCode"/> is null or whitespace.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.Zero(System.String)">
+            <summary>
+            Creates a zero-amount <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance for the specified currency.
+            </summary>
+            <param name="currencyCode">The ISO 4217 currency code.</param>
+            <returns>A new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance with zero amount.</returns>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.Add(CCA.Core.Domain.ValueObjects.Money)">
+            <summary>
+            Adds another <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> amount to this instance.
+            Both amounts must have the same currency.
+            </summary>
+            <param name="other">The amount to add.</param>
+            <returns>A new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance with the combined amount.</returns>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown when the currencies do not match.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.Subtract(CCA.Core.Domain.ValueObjects.Money)">
+            <summary>
+            Subtracts another <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> amount from this instance.
+            Both amounts must have the same currency.
+            </summary>
+            <param name="other">The amount to subtract.</param>
+            <returns>A new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance with the reduced amount.</returns>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown when the currencies do not match.
+            </exception>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.Multiply(System.Decimal)">
+            <summary>
+            Multiplies this amount by the specified factor.
+            </summary>
+            <param name="factor">The multiplication factor.</param>
+            <returns>A new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance with the multiplied amount.</returns>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.ApplyDiscount(System.Decimal)">
+            <summary>
+            Applies a percentage discount to this amount.
+            </summary>
+            <param name="percentage">The discount percentage (0–100).</param>
+            <returns>A new <see cref="T:CCA.Core.Domain.ValueObjects.Money"/> instance with the discounted amount.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            Thrown when <paramref name="percentage"/> is not between 0 and 100.
+            </exception>
+        </member>
+        <member name="P:CCA.Core.Domain.ValueObjects.Money.IsZero">
+            <summary>Gets a value indicating whether this amount is zero.</summary>
+        </member>
+        <member name="P:CCA.Core.Domain.ValueObjects.Money.IsPositive">
+            <summary>Gets a value indicating whether this amount is greater than zero.</summary>
+        </member>
+        <member name="P:CCA.Core.Domain.ValueObjects.Money.IsNegative">
+            <summary>Gets a value indicating whether this amount is less than zero.</summary>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.GetEqualityComponents">
+            <inheritdoc/>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.Money.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:CCA.Core.Domain.ValueObjects.ValueObject">
+             <summary>
+             Base class for DDD value objects.
+             Value objects have no identity — two instances with the same
+             property values are considered equal.
+             </summary>
+             <remarks>
+             Implement <see cref="M:CCA.Core.Domain.ValueObjects.ValueObject.GetEqualityComponents"/> to define which
+             properties participate in equality comparison.
+             Value objects should be immutable — all properties set in the constructor only.
+             </remarks>
+             <example>
+             <code>
+             public class Address : ValueObject
+             {
+                 public string City { get; }
+                 public string PostalCode { get; }
+            
+                 public Address(string city, string postalCode)
+                 {
+                     City = city;
+                     PostalCode = postalCode;
+                 }
+            
+                 protected override IEnumerable&lt;object?&gt; GetEqualityComponents()
+                 {
+                     yield return City;
+                     yield return PostalCode;
+                 }
+             }
+             </code>
+             </example>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.ValueObject.GetEqualityComponents">
+            <summary>
+            Returns the components used to determine equality for this value object.
+            Each yielded value participates in the equality and hash code calculation.
+            </summary>
+            <returns>The equality components of this value object.</returns>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.ValueObject.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.ValueObject.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.ValueObject.op_Equality(CCA.Core.Domain.ValueObjects.ValueObject,CCA.Core.Domain.ValueObjects.ValueObject)">
+            <summary>
+            Determines whether two value objects are equal by value.
+            </summary>
+        </member>
+        <member name="M:CCA.Core.Domain.ValueObjects.ValueObject.op_Inequality(CCA.Core.Domain.ValueObjects.ValueObject,CCA.Core.Domain.ValueObjects.ValueObject)">
+            <summary>
+            Determines whether two value objects are not equal by value.
+            </summary>
+        </member>
+    </members>
+</doc>
